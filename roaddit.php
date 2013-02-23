@@ -65,7 +65,7 @@ function getCircle($x,$y,$s,$type) {
 	return json_decode(file_get_contents("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=".$x.",".$y."&radius=".$s."&types=".$type."&sensor=false&key=AIzaSyD3j1urj8LrNyuu5-lViawfLG6nn1N6IJg"));
 }
 function getLatLong($address) { // getLatLong("")->lat and getLatLong("")->lng
-	return json_decode(file_get_contents("http://maps.googleapis.com/maps/api/geocode/json?address=".$address."&sensor=false"))->results[0]->geometry->location;
+	return json_decode(file_get_contents("http://maps.googleapis.com/maps/api/geocode/json?address=".urlencode($address)."&sensor=false"))->results[0]->geometry->location;
 }
 function getPhoto($photo) {
 	return file_get_contents("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=".$photo."&sensor=true&key=AIzaSyD3j1urj8LrNyuu5-lViawfLG6nn1N6IJg");
@@ -140,6 +140,7 @@ function getTripsFromPlaces($p,$dur,$maxDur,$maxCost) {
 	return sortTrips($trips);
 }
 function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types) {
+	initArrays();
 	$types="amusement_park|aquarium|art_gallery|bar|bowling_alley|campground|casino|movie_theater|museum|night_club|park|shopping_mall|spa|stadium|zoo|natural_feature|point_of_interest";
 	$dir = getDirections($x0,$y0,$x1,$y1)->routes[0]->legs[0];
 	$p = getPlacesAlongRoute($x0,$y0,$x1,$y1,$dir,$types);
@@ -163,8 +164,6 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types) {
 		if($count<=0) break;
 	}
 }
-initArrays();
-
 // Getting variables
 $startAddress=$_GET["starta"];
 $endAddress=$_GET["enda"];
