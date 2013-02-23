@@ -133,16 +133,21 @@ function getTripsFromPlaces($p,$dur,$maxDur,$maxCost) {
 			}
 		}
 		array_push($trip,"",$cost,$time);
-		//if($cost<=$maxCost&&$time<=$maxDur) {
+		if($cost<=$maxCost&&$time<=$maxDur) {
 			array_push($trips,$trip);
-		//}
+		}
 	}
 	return sortTrips($trips);
 }
 function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types) {
 	initArrays();
 	$types="amusement_park|aquarium|art_gallery|bar|bowling_alley|campground|casino|movie_theater|museum|night_club|park|shopping_mall|spa|stadium|zoo|natural_feature|point_of_interest";
-	$dir = getDirections($x0,$y0,$x1,$y1)->routes[0]->legs[0];
+	$dir = getDirections($x0,$y0,$x1,$y1)->routes[0];
+	echo $dir->bounds->northeast->lat.",";
+	echo $dir->bounds->northeast->lng.",";
+	echo $dir->bounds->southwest->lat.",";
+	echo $dir->bounds->southwest->lng.",";
+	$dir = $dir->legs[0];
 	$p = getPlacesAlongRoute($x0,$y0,$x1,$y1,$dir,$types);
 	$trips = getTripsFromPlaces($p,$dir->duration->value,$maxDur,$maxCost);
 	
