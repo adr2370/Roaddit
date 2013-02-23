@@ -155,5 +155,5 @@ $budget=$_GET["budget"];
 $categories=$_GET["categories"];
 
 // getEverything(34.019308,-118.494466,34.070489,-118.450438); //ROC to UCLA
-//getEverything(34.070489,-118.450438,37.774940,-122.419430,$maxDur,$maxCost); //UCLA to San Fransisco
+getEverything(34.070489,-118.450438,37.774940,-122.419430,$maxDur,$maxCost); //UCLA to San Fransisco
 ?>
