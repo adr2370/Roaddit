@@ -1,32 +1,48 @@
 <?php
-function distance($x0,$y0,$x1,$y1) {
-	$R=6371; // in km
-	$dLat=deg2rad($y1-$y0);
-	$dLon=deg2rad($x1-$x0);
-	$lat1=deg2rad($y0);
-	$lat2=deg2rad($y1);
-	$a=sin($dLat/2) * sin($dLat/2) + sin($dLon/2) * sin($dLon/2) * cos($lat1) * cos($lat2); 
-	$c = 2 * atan2(sqrt($a), sqrt(1-$a));
-	$d = $R * $c;
-	return $d;
+function getDirections($x0,$y0,$x1,$y1) {
+	return json_decode(file_get_contents("http://maps.googleapis.com/maps/api/directions/json?origin=".$x0.",".$y0."&destination=".$x1.",".$y1."&sensor=false"));
 }
 function getCircle($x,$y,$s,$type) {
-	return file_get_contents("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=".$x.",".$y."&radius=".$s."&types=".$type."&sensor=false&key=AIzaSyD3j1urj8LrNyuu5-lViawfLG6nn1N6IJg");
+	return json_decode(file_get_contents("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=".$x.",".$y."&radius=".$s."&types=".$type."&sensor=false&key=AIzaSyD3j1urj8LrNyuu5-lViawfLG6nn1N6IJg"));
+}
+function getLatLong($address) { // getLatLong("")->lat and getLatLong("")->lng
+	return json_decode(file_get_contents("http://maps.googleapis.com/maps/api/geocode/json?address=".$address."&sensor=false"))->results[0]->geometry->location;
 }
 function getAllPlaces($x0,$y0,$x1,$y1) {
-	$circleSize = 16000; // in meters
-	$dist = distance($x0,$y0,$x1,$y1); // in km
-	$res = getCircle(34.06018, -118.41835, $circleSize);
+	$types="amusement_park|aquarium|art_gallery|bowling_alley|campground|casino|movie_theater|museum|night_club|park|shopping_mall|spa|stadium|zoo|natural_feature|point_of_interest";
+	$queryLimit = 20; // max number of total circles
+	$dir = getDirections($x0,$y0,$x1,$y1)->routes[0]->legs[0];
+	$distance = $dir->distance->value;
+	$circleSize = min($distance/10,32000);
+	$duration = $dir->duration->value;
+	$distSoFar = $circleSize;
+	foreach($dir->steps as $s) {
+		$x2=$s->start_location->lat;
+		$y2=$s->start_location->lng;
+		$x3=$s->end_location->lat;
+		$y3=$s->end_location->lng;
+		$distSoFar += $s->distance->value;
+		if($distSoFar>=$circleSize) {
+			$distSoFar=0;
+			$stepDist=($s->distance->value)/$circleSize;
+			if($stepDist>5) $stepDist=5;
+			$dx=($x3-$x2)/($stepDist+1);
+			$dy=($y3-$y2)/($stepDist+1);
+			for($i=0;$i<=$stepDist;$i++) {
+				if($queryLimit > 0) {
+					$res = getCircle($x2+$i*$dx, $y2+$i*$dy, $circleSize, $types);
+					$queryLimit--;
+				}
+				foreach($res->results as $r) {
+					echo $r->name."<br/>";
+					break;
+				}
+			}
+		}
+	}
 }
-$res=json_decode(getCircle(34.06018, -118.41835, 500));
-foreach($res->results as $i) {
-	$name=$i->name;
-	$x=$i->geometry->location->lat;
-	$y=$i->geometry->location->lng;
-	$open=$i->opening_hours->open_now;
-	$rating=$i->rating;
-	echo $name." ".$x." ".$y." ".$open." ".$rating."<br/>";
-}
+// getAllPlaces(34.019308,-118.494466,34.070489,-118.450438); //ROC to UCLA
+ getAllPlaces(34.070489,-118.450438,37.774940,-122.419430); //UCLA to San Fransisco
 ?>
 <html>
 <head>
