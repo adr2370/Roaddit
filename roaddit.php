@@ -152,11 +152,11 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types) {
 	$trips = getTripsFromPlaces($p,$dir->duration->value,$maxDur,$maxCost);
 	
 	// print out trips
-	$count = 10;
+	$count = 1;
 	echo $count;
 	foreach($trips as $t) {
 		$places=0;
-		$tripOutput="";
+		$tripOutput=",Start,".$x0.",".$y0;
 		foreach($t as $place) {
 			if($place=="") break;
 			$places++;
@@ -164,6 +164,7 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types) {
 			$tripOutput.=",".$place->geometry->location->lat;
 			$tripOutput.=",".$place->geometry->location->lng;
 		}
+		$tripOutput.=",End,".$x1.",".$y1;
 		echo ",".$places.$tripOutput;
 		$count--;
 		if($count<=0) break;
