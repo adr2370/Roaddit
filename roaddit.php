@@ -142,6 +142,7 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost) {
 		if($count>10) break;
 	}
 }
+initArrays();
 
 // Getting variables
 $startAddress=$_GET["startAddress"];
