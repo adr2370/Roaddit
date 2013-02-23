@@ -143,29 +143,28 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types) {
 	initArrays();
 	$types="amusement_park|aquarium|art_gallery|bar|bowling_alley|campground|casino|movie_theater|museum|night_club|park|shopping_mall|spa|stadium|zoo|natural_feature|point_of_interest";
 	$dir = getDirections($x0,$y0,$x1,$y1)->routes[0];
-	echo $dir->bounds->northeast->lat.",";
-	echo $dir->bounds->northeast->lng.",";
-	echo $dir->bounds->southwest->lat.",";
-	echo $dir->bounds->southwest->lng.",";
+	echo $dir->bounds->northeast->lat."|";
+	echo $dir->bounds->northeast->lng."|";
+	echo $dir->bounds->southwest->lat."|";
+	echo $dir->bounds->southwest->lng."|";
 	$dir = $dir->legs[0];
 	$p = getPlacesAlongRoute($x0,$y0,$x1,$y1,$dir,$types);
 	$trips = getTripsFromPlaces($p,$dir->duration->value,$maxDur,$maxCost);
-	
 	// print out trips
 	$count = 1;
 	echo $count;
 	foreach($trips as $t) {
 		$places=0;
-		$tripOutput=",Start,".$x0.",".$y0;
+		$tripOutput="|Start|".$x0."|".$y0;
 		foreach($t as $place) {
 			if($place=="") break;
 			$places++;
-			$tripOutput.=",".$place->name;
-			$tripOutput.=",".$place->geometry->location->lat;
-			$tripOutput.=",".$place->geometry->location->lng;
+			$tripOutput.="|".$place->name;
+			$tripOutput.="|".$place->geometry->location->lat;
+			$tripOutput.="|".$place->geometry->location->lng;
 		}
-		$tripOutput.=",End,".$x1.",".$y1;
-		echo ",".$places.$tripOutput;
+		$tripOutput.="|End|".$x1."|".$y1;
+		echo "|".$places.$tripOutput;
 		$count--;
 		if($count<=0) break;
 	}
