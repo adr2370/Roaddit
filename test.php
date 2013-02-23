@@ -16,6 +16,7 @@ function getAllPlaces($x0,$y0,$x1,$y1) {
 	$circleSize = min($distance/10,32000);
 	$duration = $dir->duration->value;
 	$distSoFar = $circleSize;
+	$returnVal = array();
 	foreach($dir->steps as $s) {
 		$x2=$s->start_location->lat;
 		$y2=$s->start_location->lng;
@@ -34,18 +35,25 @@ function getAllPlaces($x0,$y0,$x1,$y1) {
 					$queryLimit--;
 				}
 				foreach($res->results as $r) {
-					echo $r->name."<br/>";
+					array_push($returnVal,$r->name." ".$r->geometry->location->lat." ".$r->geometry->location->lng);
 					break;
 				}
 			}
 		}
 	}
+	echo json_encode($returnVal);
 }
+/*
+// Getting variables
+$startAddress=$_GET["startAddress"];
+$endAddress=$_GET["endAddress"];
+$beginDay=$_GET["beginDay"];
+$beginTime=$_GET["beginTime"];
+$endDay=$_GET["endDay"];
+$endTime=$_GET["endTime"];
+$budget=$_GET["budget"];
+$categories=$_GET["categories"];
+*/
 // getAllPlaces(34.019308,-118.494466,34.070489,-118.450438); //ROC to UCLA
  getAllPlaces(34.070489,-118.450438,37.774940,-122.419430); //UCLA to San Fransisco
 ?>
-<html>
-<head>
-</head>
-<body>
-</body>
