@@ -68,11 +68,22 @@ function getCircle($x,$y,$s,$type) {
 	global $circles;
 	array_push($circles,"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=".$x.",".$y."&radius=".$s."&types=".$type."&sensor=false&key=AIzaSyD3j1urj8LrNyuu5-lViawfLG6nn1N6IJg");
 }
-function getLatLong($address) { // getLatLong("")->lat and getLatLong("")->lng
+function getLatLong($address) {
 	return json_decode(file_get_contents("http://maps.googleapis.com/maps/api/geocode/json?address=".urlencode($address)."&sensor=false"))->results[0]->geometry->location;
 }
+function getFormattedAddress($lat,$lng) {
+	return json_decode(file_get_contents("http://maps.googleapis.com/maps/api/geocode/json?address=".$lat.",".$lng."&sensor=false"))->results[0]->formatted_address;
+}
 function getPhoto($photo) {
-	return file_get_contents("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=".$photo."&sensor=true&key=AIzaSyD3j1urj8LrNyuu5-lViawfLG6nn1N6IJg");
+	$url="https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=".$photo."&sensor=true&key=AIzaSyD3j1urj8LrNyuu5-lViawfLG6nn1N6IJg";
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_HEADER, TRUE);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, FALSE);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+	$a = curl_exec($ch);
+	if(preg_match('#Location: (.*)#', $a, $r))
+		return trim($r[1]);
 }
 function getPlacesAlongRoute($x0,$y0,$x1,$y1,$dir,$types) {
 	global $circles;
@@ -169,10 +180,10 @@ function getTripsFromPlaces($p,$dur,$maxDur,$maxCost,$startTime) {
 				$which=mt_rand()%2;
 				$currplace=$p[$currPlaces[$k]][$which];
 				if(!alreadyThere($currplace,$trip)) {
+					$currTime2=$startTime+$currtime+$p[$j][2];
+					$hour=date("G",$currTime2);
 					if($which==1) {
 						//check to make sure food is coming at right time
-						$currTime=$startTime+$currtime+$p[$j][2];
-						$hour=date("G",$currTime);
 						if($hour>=12&&$hour<=14) {
 							if($lunchDone) break;
 							$lunchDone++;
@@ -202,6 +213,8 @@ function getTripsFromPlaces($p,$dur,$maxDur,$maxCost,$startTime) {
 	return sortTrips($trips);
 }
 function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
+	global $costs;
+	global $times;
 	initArrays();
 	$types="amusement_park|aquarium|art_gallery|bar|bowling_alley|campground|casino|movie_theater|museum|night_club|park|shopping_mall|spa|stadium|zoo|natural_feature|point_of_interest";
 	$dir = getDirections($x0,$y0,$x1,$y1)->routes[0];
@@ -218,15 +231,25 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	$tripsGiven=array();
 	foreach($trips as $t) {
 		$places=0;
-		$tripOutput="|Start|".$x0."|".$y0;
+		$tripOutput="|Start|".$x0."|".$y0."|0|0||";
 		foreach($t as $place) {
 			if($place=="") break;
 			$places++;
 			$tripOutput.="|".$place->name;
 			$tripOutput.="|".$place->geometry->location->lat;
 			$tripOutput.="|".$place->geometry->location->lng;
+			$currcost=0;
+			$currtime=0;
+			for($k=0;$k<count($place->types);$k++) {
+				$currcost=max($currcost,$costs[$place->types[$k]]);
+				$currtime=max($currtime,$times[$place->types[$k]]);
+			}
+			$tripOutput.="|".$currcost; // cost in dollars
+			$tripOutput.="|".$currtime; // time in hours
+			$tripOutput.="|".getPhoto($place->photos[0]->photo_reference);
+			//$tripOutput.="|".getFormattedAddress($place->geometry->location->lat,$place->geometry->location->lng);
 		}
-		$tripOutput.="|End|".$x1."|".$y1;
+		$tripOutput.="|End|".$x1."|".$y1."|0|0||";
 		if(!in_array($tripOutput,$tripsGiven)) {
 			array_push($tripsGiven,$tripOutput);
 			echo "|".$places.$tripOutput;
@@ -246,10 +269,4 @@ $startCoor=getLatLong($startAddress);
 $endCoor=getLatLong($endAddress);
 $duration=toUnixTimestamp($endDateTime)-toUnixTimestamp($startDateTime);
 getEverything($startCoor->lat,$startCoor->lng,$endCoor->lat,$endCoor->lng,$duration,$budget,$categories,toUnixTimestamp($startDateTime));
-
-	//$r->geometry->location
-	//$r->name
-	//getPhoto($r->photos[0]->photo_reference);
-	//$r->types
-	//$r->opening_hours->open_now
 ?>
