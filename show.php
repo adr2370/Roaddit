@@ -311,4 +311,5 @@ for($i=2;$i<count($route);$i++) {
 	echo "+to:".$route[$i];
 }
 echo '&amp;hl=en&amp;output=embed"></iframe>';
+echo '<a href="index.php" style="font-size: 100px;">Go back</a>'
 ?>
