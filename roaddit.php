@@ -231,7 +231,7 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	$tripsGiven=array();
 	foreach($trips as $t) {
 		$places=0;
-		$tripOutput="|Start|".$x0."|".$y0."|0|0||";
+		$tripOutput="|Start|".$x0."|".$y0."|0|0|";
 		foreach($t as $place) {
 			if($place=="") break;
 			$places++;
