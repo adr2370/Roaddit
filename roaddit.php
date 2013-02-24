@@ -260,7 +260,7 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	if(count($trips)==0) {
 		$places=0;
 		$tripOutput="|Start|".$x0."|".$y0."|0|0|";
-		$tripOutput.="|End|".$x1."|".$y1."|0|0||";
+		$tripOutput.="|End|".$x1."|".$y1."|0|0|http://www.superclass.us/sitebuilder/images/yellow_box-618x547.jpg|";
 		echo "|".$places.$tripOutput;
 	} else {
 		foreach($trips as $t) {
@@ -283,7 +283,7 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 				$tripOutput.="|".getPhoto($place->photos[0]->photo_reference);
 				//$tripOutput.="|".getFormattedAddress($place->geometry->location->lat,$place->geometry->location->lng);
 			}
-			$tripOutput.="|End|".$x1."|".$y1."|0|0||";
+			$tripOutput.="|End|".$x1."|".$y1."|0|0|http://www.superclass.us/sitebuilder/images/yellow_box-618x547.jpg|";
 			if(!in_array($tripOutput,$tripsGiven)) {
 				array_push($tripsGiven,$tripOutput);
 				echo "|".$places.$tripOutput;
