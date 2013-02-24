@@ -257,33 +257,40 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	$count = 1;
 	echo $count;
 	$tripsGiven=array();
-	foreach($trips as $t) {
+	if(count($trips)==0) {
 		$places=0;
 		$tripOutput="|Start|".$x0."|".$y0."|0|0|";
-		foreach($t as $place) {
-			if($place=="") break;
-			$places++;
-			$tripOutput.="|".$place->name;
-			$tripOutput.="|".$place->geometry->location->lat;
-			$tripOutput.="|".$place->geometry->location->lng;
-			$currcost=0;
-			$currtime=0;
-			for($k=0;$k<count($place->types);$k++) {
-				$currcost=max($currcost,$costs[$place->types[$k]]);
-				$currtime=max($currtime,$times[$place->types[$k]]);
-			}
-			$tripOutput.="|".$currcost; // cost in dollars
-			$tripOutput.="|".$currtime; // time in hours
-			$tripOutput.="|".getPhoto($place->photos[0]->photo_reference);
-			//$tripOutput.="|".getFormattedAddress($place->geometry->location->lat,$place->geometry->location->lng);
-		}
 		$tripOutput.="|End|".$x1."|".$y1."|0|0||";
-		if(!in_array($tripOutput,$tripsGiven)) {
-			array_push($tripsGiven,$tripOutput);
-			echo "|".$places.$tripOutput;
-			$count--;
-		}	
-		if($count<=0) break;
+		echo "|".$places.$tripOutput;
+	} else {
+		foreach($trips as $t) {
+			$places=0;
+			$tripOutput="|Start|".$x0."|".$y0."|0|0|";
+			foreach($t as $place) {
+				if($place=="") break;
+				$places++;
+				$tripOutput.="|".$place->name;
+				$tripOutput.="|".$place->geometry->location->lat;
+				$tripOutput.="|".$place->geometry->location->lng;
+				$currcost=0;
+				$currtime=0;
+				for($k=0;$k<count($place->types);$k++) {
+					$currcost=max($currcost,$costs[$place->types[$k]]);
+					$currtime=max($currtime,$times[$place->types[$k]]);
+				}
+				$tripOutput.="|".$currcost; // cost in dollars
+				$tripOutput.="|".$currtime; // time in hours
+				$tripOutput.="|".getPhoto($place->photos[0]->photo_reference);
+				//$tripOutput.="|".getFormattedAddress($place->geometry->location->lat,$place->geometry->location->lng);
+			}
+			$tripOutput.="|End|".$x1."|".$y1."|0|0||";
+			if(!in_array($tripOutput,$tripsGiven)) {
+				array_push($tripsGiven,$tripOutput);
+				echo "|".$places.$tripOutput;
+				$count--;
+			}	
+			if($count<=0) break;
+		}
 	}
 }
 // Getting variables
