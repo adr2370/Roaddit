@@ -254,7 +254,7 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	$p = getPlacesAlongRoute($x0,$y0,$x1,$y1,$dir,$types);
 	$trips = getTripsFromPlaces($p,$dir->duration->value,$maxDur,$maxCost,$startTime);
 	// print out trips
-	$count = 1;
+	$count = 4;
 	echo $count;
 	$tripsGiven=array();
 	if(count($trips)==0) {
@@ -280,7 +280,9 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 				}
 				$tripOutput.="|".$currcost; // cost in dollars
 				$tripOutput.="|".$currtime; // time in hours
-				$tripOutput.="|".getPhoto($place->photos[0]->photo_reference);
+				$photo=getPhoto($place->photos[0]->photo_reference);
+				if($photo=="") $photo="http://www.superclass.us/sitebuilder/images/yellow_box-618x547.jpg";
+				$tripOutput.="|".$photo;
 				//$tripOutput.="|".getFormattedAddress($place->geometry->location->lat,$place->geometry->location->lng);
 			}
 			$tripOutput.="|End|".$x1."|".$y1."|0|0|http://www.superclass.us/sitebuilder/images/yellow_box-618x547.jpg|";
