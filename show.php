@@ -156,18 +156,9 @@ function getPlacesAlongRoute($x0,$y0,$x1,$y1,$dir,$types) {
 			$food = json_decode(curl_multi_getcontent($curl_array[$count+1]));
 			$hotel = json_decode(curl_multi_getcontent($curl_array[$count+2]));
 			$curr = $places[$count/3];
-			foreach($res->results as $r) {
-				array_push($curr,$r);
-				foreach($food->results as $f) {
-					array_push($curr,$f);
-					foreach($hotel->results as $h) {
-						array_push($curr,$h);
-						break;
-					}
-					break;
-				}
-				break;
-			}
+			array_push($curr,$res->results[rand()%3]);
+			array_push($curr,$food->results[rand()%3]);
+			array_push($curr,$hotel->results[rand()%3]);
 			$places[$count/3]=$curr;
 			$timeSoFar += $s->duration->value;
 			$numCircles++;
