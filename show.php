@@ -238,6 +238,7 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	global $route;
 	initArrays();
 	$dir = getDirections($x0,$y0,$x1,$y1)->routes[0];
+	//$types="amusement_park|aquarium|art_gallery|bar|bowling_alley|campground|casino|movie_theater|museum|night_club|park|shopping_mall|spa|stadium|zoo|natural_feature|point_of_interest";
 	//echo $dir->bounds->northeast->lat."|";
 	//echo $dir->bounds->northeast->lng."|";
 	//echo $dir->bounds->southwest->lat."|";
