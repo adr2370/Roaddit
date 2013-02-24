@@ -259,13 +259,13 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	$tripsGiven=array();
 	if(count($trips)==0) {
 		$places=0;
-		$tripOutput="|Start|".$x0."|".$y0."|0|0|";
+		$tripOutput="|Start|".$x0."|".$y0."|0|0|http://www.superclass.us/sitebuilder/images/yellow_box-618x547.jpg";
 		$tripOutput.="|End|".$x1."|".$y1."|0|0|http://www.superclass.us/sitebuilder/images/yellow_box-618x547.jpg|";
 		echo "|".$places.$tripOutput;
 	} else {
 		foreach($trips as $t) {
 			$places=0;
-			$tripOutput="|Start|".$x0."|".$y0."|0|0|";
+			$tripOutput="|Start|".$x0."|".$y0."|0|0|http://www.superclass.us/sitebuilder/images/yellow_box-618x547.jpg";
 			foreach($t as $place) {
 				if($place=="") break;
 				$places++;
