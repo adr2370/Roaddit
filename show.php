@@ -2,6 +2,7 @@
 $costs = array();
 $times = array();
 $circles = array();
+$route = array();
 function initArrays() {
 	global $costs;
 	global $times;
@@ -243,27 +244,30 @@ function getTripsFromPlaces($p,$dur,$maxDur,$maxCost,$startTime) {
 function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	global $costs;
 	global $times;
+	global $route;
 	initArrays();
 	$types="amusement_park|aquarium|art_gallery|bar|bowling_alley|campground|casino|movie_theater|museum|night_club|park|shopping_mall|spa|stadium|zoo|natural_feature|point_of_interest";
 	$dir = getDirections($x0,$y0,$x1,$y1)->routes[0];
-	echo $dir->bounds->northeast->lat."|";
-	echo $dir->bounds->northeast->lng."|";
-	echo $dir->bounds->southwest->lat."|";
-	echo $dir->bounds->southwest->lng."|";
+	//echo $dir->bounds->northeast->lat."|";
+	//echo $dir->bounds->northeast->lng."|";
+	//echo $dir->bounds->southwest->lat."|";
+	//echo $dir->bounds->southwest->lng."|";
 	$dir = $dir->legs[0];
 	$p = getPlacesAlongRoute($x0,$y0,$x1,$y1,$dir,$types);
 	$trips = getTripsFromPlaces($p,$dir->duration->value,$maxDur,$maxCost,$startTime);
 	// print out trips
 	$count = 1;
-	echo $count;
+	//echo $count;
 	$tripsGiven=array();
 	foreach($trips as $t) {
 		$places=0;
 		$tripOutput="|Start|".$x0."|".$y0."|0|0|";
+		array_push($route,$x0.",".$y0);
 		foreach($t as $place) {
 			if($place=="") break;
 			$places++;
 			$tripOutput.="|".$place->name;
+			array_push($route,$place->geometry->location->lat.",".$place->geometry->location->lng);
 			$tripOutput.="|".$place->geometry->location->lat;
 			$tripOutput.="|".$place->geometry->location->lng;
 			$currcost=0;
@@ -278,9 +282,10 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 			//$tripOutput.="|".getFormattedAddress($place->geometry->location->lat,$place->geometry->location->lng);
 		}
 		$tripOutput.="|End|".$x1."|".$y1."|0|0||";
+		array_push($route,$x1.",".$y1);
 		if(!in_array($tripOutput,$tripsGiven)) {
 			array_push($tripsGiven,$tripOutput);
-			echo "|".$places.$tripOutput;
+			//echo "|".$places.$tripOutput;
 			$count--;
 		}	
 		if($count<=0) break;
@@ -297,4 +302,13 @@ $startCoor=getLatLong($startAddress);
 $endCoor=getLatLong($endAddress);
 $duration=toUnixTimestamp($endDateTime)-toUnixTimestamp($startDateTime);
 getEverything($startCoor->lat,$startCoor->lng,$endCoor->lat,$endCoor->lng,$duration,$budget,$categories,toUnixTimestamp($startDateTime));
+
+echo '<iframe width="850" height="700" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=d&amp;source=s_d&amp;saddr=';
+echo $route[0];
+echo '&amp;daddr=';
+echo $route[1];
+for($i=2;$i<count($route);$i++) {
+	echo "+to:".$route[$i];
+}
+echo '&amp;hl=en&amp;output=embed"></iframe>';
 ?>
