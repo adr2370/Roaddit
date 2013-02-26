@@ -305,7 +305,6 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 		}
 	}
 	$outputString=$intNumOutput.$outputString;
-	echo $outputString;
 }
 // Getting variables
 $startAddress=$_GET["starta"];
