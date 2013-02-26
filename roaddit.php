@@ -262,14 +262,14 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	$tripsGiven=array();
 	if(count($trips)==0) {
 		$places=0;
-		$tripOutput="|Start|".$x0."|".$y0."|0|0|StartPic";
-		$tripOutput.="|End|".$x1."|".$y1."|0|0|EndPic|";
+		$tripOutput="|Start|".$x0."|".$y0."|0|0|Start";
+		$tripOutput.="|End|".$x1."|".$y1."|0|0|End|";
 		$outputString.="|".$places.$tripOutput;
 		$intNumOutput=1;
 	} else {
 		foreach($trips as $t) {
 			$places=0;
-			$tripOutput="|Start|".$x0."|".$y0."|0|0|StartPic";
+			$tripOutput="|Start|".$x0."|".$y0."|0|0|Start";
 			foreach($t as $place) {
 				if($place=="") break;
 				$places++;
@@ -294,7 +294,7 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 				}
 				$tripOutput.="|".$tripType;
 			}
-			$tripOutput.="|End|".$x1."|".$y1."|0|".($t[count($t)-2]/3600)."|EndPic|";
+			$tripOutput.="|End|".$x1."|".$y1."|0|".($t[count($t)-2]/3600)."|End|";
 			if(!in_array($tripOutput,$tripsGiven)) {
 				array_push($tripsGiven,$tripOutput);
 				$outputString.="|".$places.$tripOutput;
