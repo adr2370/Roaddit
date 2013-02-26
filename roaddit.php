@@ -214,6 +214,18 @@ function getTripsFromPlaces($p,$dur,$maxDur,$maxCost,$startTime) {
 					$currcost=0;
 					$currtime=0;
 					for($l=0;$l<count($currplace->types);$l++) {
+						if($currplace->types[$l]=="lodging") {
+							array_splice($currplace->types,$l,1);
+						}
+					}
+					if($which==2) {
+						$currplace->types=array();
+						array_push($currplace->types,"food");
+					} else if($which==3) {
+						$currplace->types=array();
+						array_push($currplace->types,"lodging");
+					}
+					for($l=0;$l<count($currplace->types);$l++) {
 						$currcost=max($currcost,$costs[$currplace->types[$l]]);
 						$currtime=max($currtime,3600*$times[$currplace->types[$l]]);
 					}
@@ -235,7 +247,6 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	global $costs;
 	global $times;
 	initArrays();
-	//$types="amusement_park|aquarium|art_gallery|bar|bowling_alley|campground|casino|movie_theater|museum|night_club|park|shopping_mall|spa|stadium|zoo|natural_feature|point_of_interest";
 	$dir = getDirections($x0,$y0,$x1,$y1)->routes[0];
 	echo $dir->bounds->northeast->lat."|";
 	echo $dir->bounds->northeast->lng."|";
@@ -271,9 +282,15 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 				}
 				$tripOutput.="|".$currcost; // cost in dollars
 				$tripOutput.="|".$currtime; // time in hours
-				$photo=getPhoto($place->photos[0]->photo_reference);
-				if($photo=="") $photo="http://www.superclass.us/sitebuilder/images/yellow_box-618x547.jpg";
-				$tripOutput.="|".$photo;
+				$tripType="Other";
+				if(count($place->types)==1) {
+					if($place->types[0]=="Food") {
+						$tripType="Food";
+					} else {
+						$tripType="Lodging";
+					}
+				}
+				$tripOutput.="|".$tripType;
 				//$tripOutput.="|".getFormattedAddress($place->geometry->location->lat,$place->geometry->location->lng);
 			}
 			$tripOutput.="|End|".$x1."|".$y1."|0|0|http://www.superclass.us/sitebuilder/images/yellow_box-618x547.jpg|";
