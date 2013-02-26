@@ -256,14 +256,16 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	$p = getPlacesAlongRoute($x0,$y0,$x1,$y1,$dir,$types);
 	$trips = getTripsFromPlaces($p,$dir->duration->value,$maxDur,$maxCost,$startTime);
 	// print out trips
-	$count = min(4,$trips);
-	echo $count;
+	$count = 4;
+	$outputString="";
+	$intNumOutput=0;
 	$tripsGiven=array();
 	if(count($trips)==0) {
 		$places=0;
-		$tripOutput="|Start|".$x0."|".$y0."|0|0|http://www.superclass.us/sitebuilder/images/yellow_box-618x547.jpg";
-		$tripOutput.="|End|".$x1."|".$y1."|0|0|http://www.superclass.us/sitebuilder/images/yellow_box-618x547.jpg|";
-		echo "|".$places.$tripOutput;
+		$tripOutput="|Start|".$x0."|".$y0."|0|0|Start";
+		$tripOutput.="|End|".$x1."|".$y1."|0|0|End|";
+		$outputString.="|".$places.$tripOutput;
+		$intNumOutput=1;
 	} else {
 		foreach($trips as $t) {
 			$places=0;
@@ -295,12 +297,14 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 			$tripOutput.="|End|".$x1."|".$y1."|0|0|End|";
 			if(!in_array($tripOutput,$tripsGiven)) {
 				array_push($tripsGiven,$tripOutput);
-				echo "|".$places.$tripOutput;
+				$outputString.="|".$places.$tripOutput;
 				$count--;
+				$intNumOutput++;
 			}	
 			if($count<=0) break;
 		}
 	}
+	$outputString=$intNumOutput.$outputString;
 }
 // Getting variables
 $startAddress=$_GET["starta"];
