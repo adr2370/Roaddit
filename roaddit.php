@@ -256,7 +256,7 @@ function getEverything($x0,$y0,$x1,$y1,$maxDur,$maxCost,$types,$startTime) {
 	$p = getPlacesAlongRoute($x0,$y0,$x1,$y1,$dir,$types);
 	$trips = getTripsFromPlaces($p,$dir->duration->value,$maxDur,$maxCost,$startTime);
 	// print out trips
-	$count = 4;
+	$count = min(4,$trips);
 	echo $count;
 	$tripsGiven=array();
 	if(count($trips)==0) {
